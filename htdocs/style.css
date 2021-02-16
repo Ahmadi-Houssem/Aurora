@@ -1,0 +1,77 @@
+:root {
+	--icon-color: #fff;
+}
+
+.icon_color {
+	color: var(--icon-color) !important;
+}
+
+.mdc-top-app-bar__navigation-icon {
+	color: var(--icon-color) !important;
+}
+
+body {
+	margin: 0 !important;
+}
+
+#splach_screen {
+	background: #35495e;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	z-index: 99;
+}
+
+#splach_screen h1 {
+	position: absolute;
+	z-index: 100;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	margin: 0;
+	color: #fff;
+}
+
+
+#particles_canvas {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 1;
+}
+
+#vue_app {
+	height: 100vh;
+	background: var(--mdc-theme-surface);
+}
+
+.primary_clr {
+	color: #41b883 !important;
+}
+
+.section_center {
+	display: flex; 
+	justify-content: center;
+}
+
+#upload_div {
+	background: #eeeeee;
+	width: 18em;
+	height: 10em;
+	margin-bottom: 12px;
+	border: 2px solid #41b883;
+	border-style: dashed;
+}
+
+#upload_div p {
+	text-align: center;
+	position: relative;
+	top: calc( 50% - 12px );
+	margin: 0;
+}
+
+#upload_div strong {
+	cursor: pointer;
+}

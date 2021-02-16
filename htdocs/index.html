@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Aurora</title>
+	<link rel="stylesheet" href="balm-ui.css">
+	<link rel="stylesheet" href="style.css">
+	<script src="particles.min.js"></script>
+	<script src="v3.vue.js"></script>
+	<script src="socket.io.min.js"></script>
+	<script src="wavesurfer.js"></script>
+</head>
+
+<body>
+	<div id="vue_app" style="z-index: 1;">
+		<div id="splach_screen" ref="splach_screen">
+			<h1 :class="$tt('headline1')">Aurora</h1>
+			<canvas id="particles_canvas"></canvas>
+		</div>
+
+		<ui-top-app-bar fixed content-selector="#content-main" :type="type" :title="title" nav-id="drawer-menu" class="icon_color">
+			<template #toolbar="{ toolbarItemClass }">
+				<ui-icon-button :class="toolbarItemClass" class="icon_color" icon="add" @click="add_new_sound_click"></ui-icon-button>
+			</template>
+		</ui-top-app-bar>
+
+		<ui-drawer nav-id="drawer-menu" type="modal">
+			<ui-drawer-header>
+				<ui-drawer-title class="primary_clr">Aurora</ui-drawer-title>
+			</ui-drawer-header>
+
+			<ui-drawer-content>
+				<ui-list>
+					<ui-list-divider></ui-list-divider>
+					<ui-item active>
+						<ui-item-first-content>
+							<ui-icon>arrow_back</ui-icon>
+						</ui-item-first-content>
+						<ui-item-text-content>Back</ui-item-text-content>
+					</ui-item>
+
+					<ui-list-divider></ui-list-divider>
+
+					<ui-item>
+						<ui-item-text-content>SoundsDB</ui-item-text-content>
+					</ui-item>
+				</ui-list>
+			</ui-drawer-content>
+		</ui-drawer>
+		<ui-drawer-backdrop></ui-drawer-backdrop>
+
+		<div id="content-main">
+			<section>
+				<ui-textfield v-model="search_query" v-on:keyup="search_changed"> 
+					Search for:
+					<template #before>
+						<ui-textfield-icon>search</ui-textfield-icon>
+					</template>
+				</ui-textfield>
+
+				<ui-select>
+					<label>hhh</label>
+				</ui-select>
+			</section>
+
+			<ui-table :data="sounds_list" :thead="thead" :tbody="tbody" fullwidth selected-key="id">
+				<template #th-sound>
+					Sound name
+					<ui-icon v-tooltip="'Sound'" aria-describedby="th-cell-1">
+					error_outline
+					</ui-icon>
+				</template>
+
+				<template #sound="{ data }">
+					<div class="sound">{{ data.name }}</div>
+				</template>
+
+				<template #play="{ data }">
+					<ui-icon @click="show(data)">play_arrow</ui-icon>
+				</template>
+			</ui-table>			
+		</div>
+
+		<ui-dialog v-model="audio_player_open" @confirm="current_sound_data=''">
+			<ui-dialog-title>{{current_sound_data.name}}</ui-dialog-title>
+			<ui-dialog-content>
+
+				<section>
+					<p style="text-align: center;" v-if="!(load_audio_progress==1)">Loading: {{ load_audio_progress }} %</p>
+					<p style="text-align: center;" v-if="(load_audio_progress==1) && (audio_loading)">Just a moment...</p>
+					<div id="player_waveform"></div>
+				</section>
+
+				<section class="section_center">
+					<ui-icon-button v-model="sound_playing" :toggle="sound_playing_icons"></ui-icon-button>
+
+					<ui-icon-button v-model="wavesurfer_loop" :toggle="wavesurfer_loop_icons"></ui-icon-button>
+
+					<ui-icon-button v-model="audio_starred" :toggle="audio_starred_icons"></ui-icon-button>
+				</section>
+
+				<section class="section_center">
+					<ui-icon-button @click="zoom_in" icon="zoom_in"></ui-icon-button>
+					<p style="line-height: 100%;">{{ (wavesurfer_zoom.toString().slice(0, (wavesurfer_zoom.toString().indexOf("."))+2)) }}</p>
+					<ui-icon-button @click="zoom_out" icon="zoom_out"></ui-icon-button>
+				</section>
+				
+			</ui-dialog-content>
+			<ui-dialog-actions></ui-dialog-actions>
+		</ui-dialog>
+
+		<ui-dialog v-model="add_new_sound_open" @confirm="">
+			<ui-dialog-title>Add New Sound</ui-dialog-title>
+			<ui-dialog-content>
+				<section>
+					<div id="upload_div" ref="upload_div" v-on:dragover="upload_div_dragover" v-on:dragleave="upload_div_dragleave" v-on:drop="upload_div_drop">
+						<p v-if="upload_msg">
+							<strong @click="upload_div_click">Choose a file</strong>
+							<span v-if="canDragAndDrop"> or drop it here</span>
+						</p>
+						<p v-if="uploading">
+							<strong v-if="uploading">Uploading...</strong>
+						</p>
+					</div>
+					<input type="file" style="display: none;" ref="hidden_file_selector" @change="new_sounds_changed" />
+				</section>
+				<section>
+					<ui-textfield v-model="new_sound_name">Sound Name</ui-textfield>
+				</section>
+				
+				<section>
+
+				</section>
+				
+			</ui-dialog-content>
+			<ui-dialog-actions></ui-dialog-actions>
+		</ui-dialog>
+
+	</div>
+
+	<script src="balm-ui.js"></script>
+	<script src="balm-ui-plus.js"></script>
+	<script src="id.js"></script>
+	<script src="main.js"></script>
+</body>
+</html>
